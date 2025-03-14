@@ -16,3 +16,5 @@ Manage your home library of books
 # Installation
 ## Create docker image
 
+## Run dockerfile
+docker run -p 8000:8000 -p 5984:5984 -e COUCHDB_USER=myadmin -e COUCHDB_PASSWORD=mypassword fastapi-couchdb
