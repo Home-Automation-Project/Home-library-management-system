@@ -67,3 +67,85 @@ return
     "categories": ["Computers"],
     "thumbnail": "http://books.google.com/books/content?id=...",
 }
+
+
+
+
+
+
+def get_lcc_from_isbn(isbn: str):
+    """Fetch the Library of Congress Classification (LCC) number using Open Library API."""
+    
+    url = f"https://openlibrary.org/api/books?bibkeys=ISBN:{isbn}&format=json&jscmd=data"
+    response = requests.get(url).json()
+
+    if f"ISBN:{isbn}" in response:
+        book = response[f"ISBN:{isbn}"]
+        lcc = book.get("identifiers", {}).get("lcc", [])
+        return {"isbn": isbn, "lcc": lcc[0] if lcc else "Not found"}
+
+    return {"isbn": isbn, "error": "LCC not found"}
+
+# Example Usage
+isbn = "9780131103627"  # Example ISBN (The C Programming Language)
+lcc_info = get_lcc_from_isbn(isbn)
+print(lcc_info)
+
+{
+    "isbn": "9780131103627",
+    "lcc": "QA76.73.C15 K47"
+}
+
+
+
+
+
+def get_lccn_from_isbn(isbn: str):
+    """Fetch the Library of Congress Control Number (LCCN) for a given ISBN."""
+    
+    # LOC API Endpoint
+    url = f"https://lccn.loc.gov/{isbn}.json"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+        if "id" in data:
+            return {"isbn": isbn, "lccn": data["id"]}
+    
+    return {"isbn": isbn, "error": "LCCN not found"}
+
+# Example Usage
+isbn = "9780131103627"  # Example ISBN (The C Programming Language)
+lccn_info = get_lccn_from_isbn(isbn)
+print(lccn_info)
+
+def get_lccn_from_openlibrary(isbn: str):
+    """Fetch LCCN using Open Library API as an alternative."""
+    
+    url = f"https://openlibrary.org/api/books?bibkeys=ISBN:{isbn}&format=json&jscmd=data"
+    response = requests.get(url).json()
+
+    if f"ISBN:{isbn}" in response:
+        book = response[f"ISBN:{isbn}"]
+        lccn = book.get("identifiers", {}).get("lccn", [])
+        return {"isbn": isbn, "lccn": lccn[0] if lccn else "Not found"}
+
+    return {"isbn": isbn, "error": "LCCN not found"}
+
+# Example Usage
+lccn_info = get_lccn_from_openlibrary(isbn)
+print(lccn_info)
+How It Works
+	1.	Primary Source:
+	•	Queries Library of Congress API (lccn.loc.gov/{isbn}.json).
+	•	Returns LCCN if found.
+	2.	Fallback Source (Optional):
+	•	Queries Open Library API.
+	•	Extracts LCCN from metadata if available.
+	
+	
+{
+    "isbn": "9780131103627",
+    "lccn": "88888888"
+}
+
